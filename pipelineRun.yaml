@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  creationTimestamp: null
+  generateName: func-test-build-deploy-pipeline-run-
+  namespace: default
+spec:
+  pipelineRef:
+    name: func-test-build-deploy-pipeline
+  serviceAccountName: dockerconfig
+  workspaces:
+  - name: sources
+    persistentVolumeClaim:
+      claimName: source-pvc
+    subPath: source
+  - name: dockerconfig
+    secret:
+      secretName: dockersecretp      
+status: {}

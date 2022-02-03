@@ -1,0 +1,8 @@
+get-predefined-tasks:
+  kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/v1alpha1/git/git-clone.yaml
+  kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/v1alpha1/kaniko/kaniko.yaml
+
+run-pipeline:
+  kubectl apply -f pipeline.yaml
+  kubectl create -f pipelinerun.yaml
+

@@ -1,0 +1,7 @@
+tekton yq help doc:: https://mikefarah.gitbook.io/yq/v/v4.x/upgrading-from-v3#updating-writing-documents
+
+github token :: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-token
+
+tekton trigger and eventlistner :: https://github.com/tektoncd/triggers/tree/main/docs/getting-started
+
+tekton install :: https://github.com/tektoncd/dashboard

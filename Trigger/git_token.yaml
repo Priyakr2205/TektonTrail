@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: webhook-secret
+  namespace: tekton-events
+stringData:
+  token: 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
+  secret: random-string-data

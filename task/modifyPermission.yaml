@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: modify-permission
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/categories: CLI
+    tekton.dev/tags: cli
+    tekton.dev/platforms: "linux/amd64"
+spec:
+  description: >-
+    This Task modifies the file permission
+  params:
+  - name: path
+    description: path of file/folder whose permission should be changed
+  - name: permission-level
+    description: permission level to set.
+    default: "644"
+  workspaces:
+    - name: output
+      description: The workspace containing the project. 
+  steps:
+  - name: prepare
+    image: docker.io/library/bash:5.1.4@sha256:b208215a4655538be652b2769d82e576bc4d0a2bb132144c060efc5be8c3f5d6
+    script: |
+        #!/usr/bin/env bash
+        set -e
+          echo "> Setting permissions on '$(workspaces.output.path)/$(params.path)'..."
+          chmod -R "$(params.permission-level)" "$(workspaces.output.path)/$(params.path)"
+        ls -l -R $(workspaces.output.path)

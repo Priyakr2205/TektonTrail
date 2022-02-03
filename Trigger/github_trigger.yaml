@@ -1,0 +1,66 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: tekton-events-triggertemplate
+  namespace: tekton-events
+spec:
+  params:
+    - name: gitrevision
+      description: The git revision
+      default: master
+    - name: gitrepositoryurl
+      description: The git repository url
+    - name: namespace
+      description: The namespace to create the resources
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        creationTimestamp: null
+        generateName: func-test-git-webhook-
+        namespace: $(tt.params.namespace)
+      spec:
+        params:
+        - name: gitRepository
+          value: $(tt.params.gitrepositoryurl)
+        - name: gitRevision
+          value: $(tt.params.gitrevision)
+        pipelineRef:
+          name: func-test-build-deploy-pipeline
+        serviceAccountName: tekton-triggers-example-sa
+        workspaces:
+        - name: sources
+          persistentVolumeClaim:
+            claimName: source-pvc
+          subPath: source
+        - name: dockerconfig
+          secret:
+            secretName: dockersecretp      
+      status: {}
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: tekton-events-pipelinebinding
+  namespace: tekton-events
+spec:
+  params:
+    - name: gitrevision
+      value: $(body.head_commit.id)
+    - name: namespace
+      value: tekton-events
+    - name: gitrepositoryurl
+      value: "https://github.com/$(body.repository.full_name)"
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: tekton-events-listener
+  namespace: tekton-events
+spec:
+  serviceAccountName: tekton-triggers-example-sa
+  triggers:
+    - bindings:
+      - ref: tekton-events-pipelinebinding
+      template:
+        ref: tekton-events-triggertemplate

@@ -1,0 +1,105 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: func-test-build-deploy-pipeline
+  annotations:
+    description: |
+      Build the a `func` project and deploys it to the cluster
+spec:
+  params:
+    - name: gitRepo
+      description: The git repository that hosts the project
+      default: https://github.com/Priyakr2205/math-controller
+    - name: gitRevision
+      description: The git revision to build
+      default: main
+    - name: kind
+      description: resource kind
+      default: Pod
+    - name: IMAGE_REPO
+      description: Image repository name
+      default: priyadevdoc
+    - name: IMAGE_NAME
+      description: The name of the built container image. 
+      default: test_image
+    - name: IMAGE_TAG
+      description: The tag of the built container image. 
+      default: v1
+  workspaces:
+    - name: sources
+      description: Workspace where the git repo is prepared for building
+    - name: dockerconfig
+      description: Workspace where docker secret is stored
+  tasks:
+    - name: clone-repo
+      taskRef:
+        name: git-clone
+        bundle: gcr.io/tekton-releases/catalog/upstream/git-clone:0.5
+      params:
+        - name: url
+          value: $(params.gitRepo)
+        - name: revision
+          value: $(params.gitRevision)
+        - name: deleteExisting
+          value: "true"
+      workspaces:
+        - name: output
+          workspace: sources
+    - name: modify-permission
+      runAfter: [clone-repo]
+      taskRef:
+        name: modify-permission
+      params:
+        - name: path
+          value: "./src/"
+        - name: permission-level
+          value: "777"
+      workspaces:
+        - name: output
+          workspace: sources
+    - name: source-to-image
+      runAfter: [modify-permission]
+      taskRef:
+        name: kaniko
+      params:
+        - name: CONTEXT
+          value: src 
+        - name: IMAGE
+          value: priyadevdoc/test_image:v1
+        - name: EXTRA_ARGS
+          value: 
+            - --skip-tls-verify
+      workspaces:
+        - name: source
+          workspace: sources
+        - name: dockerconfig
+          workspace: dockerconfig
+    - name: yaml-replace
+      runAfter: [source-to-image]
+      taskRef:
+        name: yq
+      workspaces:
+        - name: source
+          workspace: sources
+      params:
+        - name: files
+          value:
+          - "./src/artifacts/deployment.yaml"
+        - name: expression
+          value: '.spec.template.spec.containers[0].image=\""$(params.IMAGE_REPO)\/$(params.IMAGE_NAME):$(params.IMAGE_TAG)@$(tasks.source-to-image.results.IMAGE-DIGEST)"\"'
+    - name: display-results
+      runAfter: [yaml-replace]
+      workspaces:
+        - name: source
+          workspace: sources
+      taskSpec:
+        workspaces:
+        - name: source
+        steps:
+          - name: print
+            image: docker.io/library/bash:5.1.4@sha256:b208215a4655538be652b2769d82e576bc4d0a2bb132144c060efc5be8c3f5d6
+            script: |
+              #!/usr/bin/env bash
+              set -e
+              cat $(workspaces.source.path)/src/artifacts/deployment.yaml
+    

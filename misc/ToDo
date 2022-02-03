@@ -1,0 +1,13 @@
+- clone git repo
+- use dockerfile to build
+- upload to dockerhub
+
+- deploy
+     - deploy yaml files fom workspace
+     - use deployment yaml to deploy application
+
+Help Link:
+
+Link: https://redhat-scholars.github.io/tekton-tutorial/tekton-tutorial/pipeline-resources.html#tekton-res-prerequisite
+
+Pipeline Resource Type : https://github.com/tektoncd/pipeline/blob/main/docs/resources.md#resource-types
