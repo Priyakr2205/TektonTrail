@@ -8,15 +8,15 @@ spec:
     name: create-ingress
   params:
   - name: CreateCertificate
-    value: "true"
+    value: "false"
   - name: CertificateKeyPassphrase
     value: asecretphrase
   - name: CertificateSecretName
     value: ingresssecret
   - name: ExternalDomain
-    value: getting-started.iancoffey.com
+    value: eventlistner.chennaidev-26.tatacommunications.com
   - name: Service
-    value: getting-started
+    value: el-tekton-events-listener
   - name: ServicePort
     value: "8080"
   timeout: 1000s

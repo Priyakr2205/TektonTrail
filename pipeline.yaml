@@ -9,10 +9,10 @@ spec:
   params:
     - name: gitRepo
       description: The git repository that hosts the project
-      default: https://github.com/Priyakr2205/math-controller
+      default: http://10.8.30.54:81/priya.kumari/project1.git
     - name: gitRevision
       description: The git revision to build
-      default: main
+      default: master
     - name: kind
       description: resource kind
       default: Pod
@@ -28,8 +28,10 @@ spec:
   workspaces:
     - name: sources
       description: Workspace where the git repo is prepared for building
+    - name: gitconfig
+      description: Workspace where git secret is stored
     - name: dockerconfig
-      description: Workspace where docker secret is stored
+      description: workspace where docker secret is stored
   tasks:
     - name: clone-repo
       taskRef:
@@ -45,13 +47,15 @@ spec:
       workspaces:
         - name: output
           workspace: sources
+        - name: basic-auth
+          workspace: gitconfig
     - name: modify-permission
       runAfter: [clone-repo]
       taskRef:
         name: modify-permission
       params:
         - name: path
-          value: "./src/"
+          value: "."
         - name: permission-level
           value: "777"
       workspaces:
@@ -62,8 +66,6 @@ spec:
       taskRef:
         name: kaniko
       params:
-        - name: CONTEXT
-          value: src 
         - name: IMAGE
           value: priyadevdoc/test_image:v1
         - name: EXTRA_ARGS
@@ -84,7 +86,7 @@ spec:
       params:
         - name: files
           value:
-          - "./src/artifacts/deployment.yaml"
+          - "./artifacts/deployment.yaml"
         - name: expression
           value: '.spec.template.spec.containers[0].image=\""$(params.IMAGE_REPO)\/$(params.IMAGE_NAME):$(params.IMAGE_TAG)@$(tasks.source-to-image.results.IMAGE-DIGEST)"\"'
     - name: display-results
@@ -101,5 +103,27 @@ spec:
             script: |
               #!/usr/bin/env bash
               set -e
-              cat $(workspaces.source.path)/src/artifacts/deployment.yaml
-    
+              cat $(workspaces.source.path)/artifacts/deployment.yaml
+    - name: deploy-image
+      runAfter: [yaml-replace]
+      workspaces:
+        - name: source
+          workspace: sources
+      taskSpec:
+        workspaces:
+        - name: source
+        steps:
+          - name: deploy
+            image: gcr.io/cloud-builders/kubectl@sha256:8ab94be8b2b4f3d117f02d868b39540fddd225447abf4014f7ba4765cb39f753 
+            script: |
+              #!/usr/bin/env bash
+              set -e
+              cd $(workspaces.source.path)/artifacts/
+                    
+              kubectl create namespace tekton-deploy
+              kubectl apply -f mathematicsCRD.yaml -n tekton-deploy
+              kubectl apply -f deployment.yaml -n tekton-deploy
+              
+              
+              
+            

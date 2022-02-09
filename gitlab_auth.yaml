@@ -1,0 +1,11 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: my-basic-auth-secret
+type: Opaque
+stringData:
+  .gitconfig: |
+    [credential "http://10.8.30.54:81"]
+      helper = store
+  .git-credentials: |
+    http://priya.kumari:tatacomm@10.8.30.54:81

@@ -33,9 +33,12 @@ spec:
           persistentVolumeClaim:
             claimName: source-pvc
           subPath: source
+        - name: gitconfig
+          secret:
+            secretName: my-basic-auth-secret
         - name: dockerconfig
           secret:
-            secretName: dockersecretp      
+            secretName: docker-auth-secret      
       status: {}
 ---
 apiVersion: triggers.tekton.dev/v1alpha1
@@ -46,11 +49,11 @@ metadata:
 spec:
   params:
     - name: gitrevision
-      value: $(body.head_commit.id)
+      value: $(body.commits.id)
     - name: namespace
       value: tekton-events
     - name: gitrepositoryurl
-      value: "https://github.com/$(body.repository.full_name)"
+      value: $(body.project.git_http_url)
 ---
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
@@ -60,7 +63,12 @@ metadata:
 spec:
   serviceAccountName: tekton-triggers-example-sa
   triggers:
-    - bindings:
+    - name: github-listener
+      interceptors:
+      - gitlab:
+          eventTypes:
+          - Push Hook
+      bindings:
       - ref: tekton-events-pipelinebinding
       template:
         ref: tekton-events-triggertemplate

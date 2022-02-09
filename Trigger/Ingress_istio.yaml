@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: tekton-gateway
+  namespace: tekton-events
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http-tekton
+      protocol: HTTP
+    hosts:
+    - eventlistener.chennaidev-26.tatacommunications.com
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: tekton
+  namespace: tekton-events
+spec:
+  hosts:
+  - "eventlistener.chennaidev-26.tatacommunications.com"
+  gateways:
+  - tekton-gateway
+  http:
+  - match:
+    - uri: 
+        prefix: /
+    route:
+    - destination:
+        port:
+          number: 8080
+        host: el-tekton-events-listener.tekton-events.svc.cluster.local
+

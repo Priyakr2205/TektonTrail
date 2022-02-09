@@ -13,7 +13,7 @@ spec:
     persistentVolumeClaim:
       claimName: source-pvc
     subPath: source
-  - name: dockerconfig
+  - name: gitconfig
     secret:
-      secretName: dockersecretp      
+      secretName: my-basic-auth-secret   
 status: {}

@@ -1,10 +1,23 @@
+- create webhook and eventlistener to automate pipelineRun
 - clone git repo
 - use dockerfile to build
 - upload to dockerhub
-
+- modify deployment yaml to include latest image digest
 - deploy
      - deploy yaml files fom workspace
-     - use deployment yaml to deploy application
+     - use deployment yaml to deploy application.
+- try using multiple credentials in pipeline ( using workspace).
+- try multi-banch build.
+
+- try webhook with secret
+- add check to delete namespace before deployment
+- try when condition in Task
+- check if multiple image can be used in a single task can be called inside single task.
+- add check to trigger specific task based on some filter like branch name
+- check versality of tekton dashboard( how user-friendly it is).
+- check how to add test stage before build.
+- how to add cloudevent to notify success or failure.
+
 
 Help Link:
 

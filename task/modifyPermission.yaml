@@ -27,6 +27,7 @@ spec:
     script: |
         #!/usr/bin/env bash
         set -e
+          ls -l -R $(workspaces.output.path)
           echo "> Setting permissions on '$(workspaces.output.path)/$(params.path)'..."
           chmod -R "$(params.permission-level)" "$(workspaces.output.path)/$(params.path)"
         ls -l -R $(workspaces.output.path)

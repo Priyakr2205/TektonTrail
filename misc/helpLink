@@ -5,3 +5,5 @@ github token :: https://docs.github.com/en/authentication/keeping-your-account-a
 tekton trigger and eventlistner :: https://github.com/tektoncd/triggers/tree/main/docs/getting-started
 
 tekton install :: https://github.com/tektoncd/dashboard
+
+https://www.codegrepper.com/code-examples/shell/write+shell+script+to+check+whether+a+namespace+exists+in+kubernetes
