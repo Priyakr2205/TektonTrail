@@ -1,3 +1,5 @@
+Done :::
+------------------------------------------------------------------------------------------------------------------------------
 - create webhook and eventlistener to automate pipelineRun
 - clone git repo
 - use dockerfile to build
@@ -8,7 +10,13 @@
      - use deployment yaml to deploy application.
 - try using multiple credentials in pipeline ( using workspace).
 - try multi-banch build.
+- try deploying to a different cluster.
 
+
+To Try :::
+----------------------------------------------------------------------------------------------------------------------------------
+- try staging deployment.
+- check how to do integration testing / verify deployment is successful.
 - try webhook with secret
 - add check to delete namespace before deployment
 - try when condition in Task
@@ -17,9 +25,11 @@
 - check versality of tekton dashboard( how user-friendly it is).
 - check how to add test stage before build.
 - how to add cloudevent to notify success or failure.
+- cleanup of pods sdeployed by pipeline.
 
 
-Help Link:
+Help Link :::
+---------------------------------------------------------------------------------------------------------------------------------------
 
 Link: https://redhat-scholars.github.io/tekton-tutorial/tekton-tutorial/pipeline-resources.html#tekton-res-prerequisite
 

@@ -38,7 +38,11 @@ spec:
             secretName: my-basic-auth-secret
         - name: dockerconfig
           secret:
-            secretName: docker-auth-secret      
+            secretName: docker-auth-secret 
+        - name: shared-workspace
+          persistentVolumeClaim:
+            claimName: source-pvc
+          subPath: config    
       status: {}
 ---
 apiVersion: triggers.tekton.dev/v1alpha1
