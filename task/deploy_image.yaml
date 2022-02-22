@@ -1,3 +1,4 @@
+#task to deploy task on specific cluster.
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
@@ -7,7 +8,7 @@ spec:
     These Tasks are Git tasks to work with repositories used by other tasks
     in your Pipeline.
 
-    The git clone can be used to deploy image to specified cluster.
+    The task can be used to deploy image to specified cluster.
   workspaces:
     - name: output
       description: The git repo will be cloned onto the volume backing this Workspace.
@@ -51,7 +52,7 @@ spec:
               if [ $namespaceStatus == "Terminating" ] ; then
                   echo "namespace in terminating state"
              
-                  apk add curl
+                  apk add curl 
 
                   kubectl proxy 8001 & kubectl get ns ${namespace} -o json | jq "del(.spec.finalizers[0])" > tmp.json; \
                   curl -k -H "Content-Type: application/json" -X PUT --data-binary @"tmp.json" "http://127.0.0.1:8001/api/v1/namespaces/${namespace}/finalize"

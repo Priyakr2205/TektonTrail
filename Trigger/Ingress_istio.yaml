@@ -1,3 +1,4 @@
+#for exposing tekton eventlistener. this will be used for creating webhook at external applications like gitlab/github etc
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -8,7 +9,7 @@ spec:
     istio: ingressgateway # use Istio default gateway implementation
   servers:
   - port:
-      number: 80
+      number: 91 
       name: http-tekton
       protocol: HTTP
     hosts:

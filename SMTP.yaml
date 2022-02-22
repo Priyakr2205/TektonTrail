@@ -1,7 +1,7 @@
 kind: Secret
 apiVersion: v1
 metadata:
-  name: mail-server-secret
+  name: mail-server-secret #to be used for notification. not currently used in pipeline.
 stringData:
   url: "smtp.gmail.com"
   port: "465"

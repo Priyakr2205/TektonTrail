@@ -12,7 +12,7 @@ spec:
       description: The git repository url
     - name: namespace
       description: The namespace to create the resources
-  resourcetemplates:
+  resourcetemplates: #PipelineRun defination starts below. Based on requirement resourcetemplates can contain any resource defination( like pipelineRun, taskRun)
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
@@ -22,28 +22,24 @@ spec:
       spec:
         params:
         - name: gitRepository
-          value: $(tt.params.gitrepositoryurl)
+          value: $(tt.params.gitrepositoryurl) # here 'tt' means TriggerTemplate
         - name: gitRevision
           value: $(tt.params.gitrevision)
         pipelineRef:
           name: func-test-build-deploy-pipeline
-        serviceAccountName: tekton-triggers-example-sa
+        serviceAccountName: tekton-triggers-example-sa #this serviceAccount will be used for running pipeline. One pipeline Can have only one SA specified.
         workspaces:
-        - name: sources
-          volumeClaimTemplate:
-            spec:
-              accessModes:
-                - ReadOnlyMany
-              resources:
-                requests:
-                  storage: 500Mi
-        - name: gitconfig
+        - name: sources #this workspace will be used to store project code
+          persistentVolumeClaim:
+            claimName: source-pvc
+          subPath: source 
+        - name: gitconfig #stores git secret
           secret:
             secretName: my-basic-auth-secret
-        - name: dockerconfig
+        - name: dockerconfig #store docker secret
           secret:
             secretName: docker-auth-secret 
-        - name: shared-workspace
+        - name: shared-workspace #this workspace will be used to store kubeconfig file
           persistentVolumeClaim:
             claimName: source-pvc
           subPath: config    
@@ -55,7 +51,7 @@ metadata:
   name: tekton-events-pipelinebinding
   namespace: tekton-events
 spec:
-  params:
+  params: #Values from webhook payload JSON is used for filling below params.
     - name: gitrevision
       value: $(body.commits.id)
     - name: namespace
@@ -72,9 +68,9 @@ spec:
   serviceAccountName: tekton-triggers-example-sa
   triggers:
     - name: github-listener
-      interceptors:
+      interceptors: #catches event and filters to check for which events pipeline should to be initiated.
       - gitlab:
-          eventTypes:
+          eventTypes: #specify event type to consider while initiating pipelineRun. If not provided, it will initiate pipeline for all eventtype.
           - Push Hook
       bindings:
       - ref: tekton-events-pipelinebinding

@@ -2,12 +2,12 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   creationTimestamp: null
-  generateName: func-test-build-deploy-pipeline-run-
+  generateName: func-test-build-deploy-pipeline-run- #generate dynamic names for pipelinerun
   namespace: default
 spec:
   pipelineRef:
     name: func-test-build-deploy-pipeline
-  serviceAccountName: dockerconfig
+  serviceAccountName: dockerconfig 
   workspaces:
   - name: sources
     persistentVolumeClaim:

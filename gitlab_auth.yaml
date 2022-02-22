@@ -7,5 +7,5 @@ stringData:
   .gitconfig: |
     [credential "http://10.8.30.54:81"]
       helper = store
-  .git-credentials: |
+  .git-credentials: | # http://username:password@gitlabIP
     http://priya.kumari:tatacomm@10.8.30.54:81
