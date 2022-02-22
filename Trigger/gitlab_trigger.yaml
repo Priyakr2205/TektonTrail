@@ -30,9 +30,13 @@ spec:
         serviceAccountName: tekton-triggers-example-sa
         workspaces:
         - name: sources
-          persistentVolumeClaim:
-            claimName: source-pvc
-          subPath: source
+          volumeClaimTemplate:
+            spec:
+              accessModes:
+                - ReadOnlyMany
+              resources:
+                requests:
+                  storage: 500Mi
         - name: gitconfig
           secret:
             secretName: my-basic-auth-secret

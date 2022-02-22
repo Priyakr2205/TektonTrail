@@ -1,0 +1,10 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: mail-server-secret
+stringData:
+  url: "smtp.gmail.com"
+  port: "465"
+  user: "pk442840@gmail.com"
+  password: "Pk9199298793@"
+  tls: "False"

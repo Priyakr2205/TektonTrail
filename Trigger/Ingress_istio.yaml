@@ -12,7 +12,7 @@ spec:
       name: http-tekton
       protocol: HTTP
     hosts:
-    - eventlistener.chennaidev-26.tatacommunications.com
+    - eventlistener.chennaidev-26.organisation.com
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -21,7 +21,7 @@ metadata:
   namespace: tekton-events
 spec:
   hosts:
-  - "eventlistener.chennaidev-26.tatacommunications.com"
+  - "eventlistener.chennaidev-26.organisation.com"
   gateways:
   - tekton-gateway
   http:

@@ -129,28 +129,20 @@ spec:
     - name: deploy-image
       runAfter: [create-config]
       workspaces:
-        - name: source
+        - name: output
           workspace: sources
-        - name: shared-workspace
+        - name: kube-workspace
           workspace: shared-workspace
-      taskSpec:
-        workspaces:
-        - name: source
-        - name: shared-workspace
-        steps:
-          - name: deploy
-            image: gcr.io/cloud-builders/kubectl@sha256:8ab94be8b2b4f3d117f02d868b39540fddd225447abf4014f7ba4765cb39f753 
-            script: |
-              #!/usr/bin/env bash
-              set -e
-              ls -l 
-              cd $(workspaces.source.path)/artifacts/
-              
-              export KUBECONFIG="$(workspaces.shared-workspace.path)/kubeconfig"
-              kubectl create namespace tekton-deploy
-              kubectl apply -f mathematicsCRD.yaml -n tekton-deploy
-              kubectl apply -f deployment.yaml -n tekton-deploy
-              
-              
-              
+      taskRef:
+          name: deploy-image
+      params:
+        - name: manifest
+          value: artifacts/
+        - name: namespace
+          value: tekton-pipeline-deploy
+        - name: files
+          value:
+            - mathematicsCRD.yaml
+            - deployment.yaml              
+  
             
