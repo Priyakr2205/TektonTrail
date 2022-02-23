@@ -12,12 +12,14 @@ spec:
       description: The git repository url
     - name: namespace
       description: The namespace to create the resources
+    - name: project
+      description: The name of the project.
   resourcetemplates: #PipelineRun defination starts below. Based on requirement resourcetemplates can contain any resource defination( like pipelineRun, taskRun)
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
         creationTimestamp: null
-        generateName: func-test-git-webhook-
+        generateName: $(tt.params.project)-
         namespace: $(tt.params.namespace)
       spec:
         params:
@@ -53,11 +55,13 @@ metadata:
 spec:
   params: #Values from webhook payload JSON is used for filling below params.
     - name: gitrevision
-      value: $(body.commits.id)
+      value: $(body.ref) #using body ref here. in place of it branch name, commit id, checkout_sha can also be used.
     - name: namespace
       value: tekton-events
     - name: gitrepositoryurl
       value: $(body.project.git_http_url)
+    - name: project
+      value: $(body.project.name)
 ---
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
